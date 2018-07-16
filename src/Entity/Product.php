@@ -24,12 +24,12 @@ class Product
     /**
      * @ORM\Column(type="integer")
      */
-    private $Price;
+    private $price;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $Description;
+    private $description;
 
     public function getId()
     {
@@ -50,12 +50,12 @@ class Product
 
     public function getPrice(): ?int
     {
-        return $this->Price;
+        return $this->price;
     }
 
-    public function setPrice(int $Price): self
+    public function setPrice(int $price): self
     {
-        $this->Price = $Price;
+        $this->price = $price;
 
         return $this;
     }
