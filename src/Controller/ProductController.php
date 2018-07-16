@@ -119,7 +119,9 @@ class ProductController extends Controller
 	public function update(Request $request, $id)
 	{
 		$entityManager = $this->getDoctrine()->getManager();
-		$product = $entityManager->getRepository(Product::class)->find($id);
+		$product = $entityManager
+			->getRepository(Product::class)
+			->find($id);
 
 		if (!$product) {
 			throw $this->createNotFoundException(
