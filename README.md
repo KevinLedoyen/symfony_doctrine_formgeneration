@@ -5,30 +5,31 @@ https://symfony.com/doc/current/doctrine.html   -> paragraphe doctrine
 Installation de Doctrine ¶
 Tout d'abord, installez la prise en charge de Doctrine via le pack ORM, ainsi que MakerBundle, ce qui vous aidera à générer du code:
 
-///////////////////////////////////////////////////////////
+```
 composer require symfony/orm-pack
 composer require doctrine
-//////////////////////////////////////////////////////////
+```
 
 Si vous ne l'avez pas encore installé, MakerBundle, ce qui vous aidera à générer du code:
+```
 composer require symfony/maker-bundle --dev
-/////////////////////////////////////////////////////////////
+```
 
 Configuration de la base de données ¶
 Les informations de connexion à la base de données sont stockées en tant que variable d'environnement appelée  DATABASE_URL. 
 Pour le développement, vous pouvez trouver et personnaliser ceci à l'intérieur .env:
 
 3 dernières lignes
-//////////////////////////////////////////////////////////////////
+```
 # Configure your db driver and server_version in config/packages/doctrine.yaml
 DATABASE_URL=mysql://root:@127.0.0.1:3306/mondialdoc
 ###< doctrine/doctrine-bundle ###
-//////////////////////////////////////////////////////////////////
+```
 
 Maintenant que vos paramètres de connexion sont configurés, Doctrine peut créer la db_name base de données pour vous:
-//////////////////////////////////////////////////////////////////
+```
  php bin/console doctrine:database:create
-//////////////////////////////////////////////////////////////////
+```
 
 Il y a plus d'options dans config/packages/doctrine.yaml que vous pouvez configurer, 
 y compris votre server_version(par exemple 5.7 si vous utilisez MySQL 5.7), 
@@ -40,13 +41,13 @@ Supposons que vous construisiez une application dans laquelle les produits doive
 Sans même penser à Doctrine ou aux bases de données, vous savez déjà que vous avez besoin d'un objet Product pour représenter ces produits.
 
 Vous pouvez utiliser commande la make:entity  pour créer cette classe et tous les champs dont vous avez besoin. 
-//////////////////////////////////////////////////////////////////
+```
 php bin/console make:entity
-//////////////////////////////////////////////////////////////////
+```
 La commande vous posera quelques questions - répondez-y comme fait ci-dessous:
 
 
-//////////////////////////////////////////////////////////////////
+```
 Class name of the entity to create or update:
 > Product
 
@@ -74,7 +75,7 @@ Can this field be null in the database (nullable) (yes/no) [no]:
  to stop adding fields):
 >
 (press enter again to finish)
-//////////////////////////////////////////////////////////////////
+```
 
 Vous avez maintenant un nouveau fichier src/Entity/Product.php:
 
@@ -89,9 +90,9 @@ La classe Product est entièrement configurée et prête à enregistrer dans une
 Bien sûr, votre base de données n'a pas encore la table product. 
 Pour l'ajouter, vous pouvez tirer parti de DoctrineMigrationsBundle , qui est déjà installé:
 
-//////////////////////////////////////////////////////////////////
+```
  php bin/console make:migration
-//////////////////////////////////////////////////////////////////
+```
  
 Si tout fonctionnait, vous devriez voir quelque chose comme ceci:
 
@@ -101,9 +102,9 @@ regardez la nouvelle migration "src / Migrations / Version20180207231217.php"
 Si vous ouvrez ce fichier, il contient le code SQL nécessaire pour mettre à jour votre base de données! 
 Pour exécuter ce SQL, exécutez vos migrations:
 
-//////////////////////////////////////////////////////////////////
+```
  php bin/console doctrine:migrations:migrate
- //////////////////////////////////////////////////////////////////
+ ```
  
  Cette commande exécute tous les fichiers de migration qui n'ont pas encore été exécutés sur votre base de données. 
  Vous devez exécuter cette commande sur la production lorsque vous déployez pour maintenir votre base de données de production à jour
@@ -112,11 +113,11 @@ Migrations et ajout de plusieurs champs ¶
 Mais que faire si vous avez besoin d'ajouter une nouvelle propriété de champ à Product, comme un description? 
 Il est facile d'ajouter la nouvelle propriété à la main. 
 Mais, vous pouvez également utiliser à nouveau
-//////////////////////////////////////////////////////////////////
+```
 php bin/console make:entity
-//////////////////////////////////////////////////////////////////
+```
 
-////////////////////////////////////////////////////////////////////
+```
 Class name of the entity to create or update
 > Product
 
@@ -132,7 +133,7 @@ Can this field be null in the database (nullable) (yes/no) [no]:
  to stop adding fields):
 >
 (press enter again to finish)
-////////////////////////////////////////////////////////////////////
+```
 
 Cela ajoute la nouvelle propriété  description et les méthodes getDescription()et  setDescription()  dans src/Entity/Product.php
 
@@ -224,7 +225,7 @@ Supposons que vous vouliez pouvoir voir  votre nouveau produit:
 avec la route /product/1 
 
 ajoutons dans le controller 
-////////////////////////////////////////////////////////////////////
+```
 /**
  * @Route("/product/{id}", name="product_show")
  */
@@ -246,7 +247,7 @@ public function show($id)
     //dans le template , affichez le nom grâce à {{ product.name }}
     // return $this->render('product/show.html.twig', ['product' => $product]);
 }
-////////////////////////////////////////////////////////////////////////
+```
 http://localhost:8000/product/1
  cela affiche le nom de la 1ere ligne de la table
  
@@ -254,7 +255,7 @@ http://localhost:8000/product/1
  Supposons que vous vouliez modifier votre nouveau produit: 
 avec la route /product/edit/1 
 
- ////////////////////////////////////////////////////////////////////////
+```
  /**
 	 * @Route("/product/edit/{id}")
 	 */
@@ -278,7 +279,7 @@ avec la route /product/edit/1
 	        'id' => $product->getId()
 	    ]);
 	}
-////////////////////////////////////////////////////////////////////////
+```
  http://localhost:8000/product/edit/1
  cela modifie  le nom de la 1ere ligne de la table
  
@@ -287,7 +288,7 @@ avec la route /product/edit/1
  Supposons que vous vouliez supprimer votre nouveau produit: 
 avec la route /product/delete/1 
  
- ////////////////////////////////////////////////////////////////////////
+```
 /**
  * @Route("/product/delete/{id}")
  */
@@ -309,9 +310,9 @@ public function delete($id)
 
    return new Response("supprime id:".$id);
 }
-  ////////////////////////////////////////////////////////////////////////
-  http://localhost:8000/product/delete/1
- cela supprimer   la 1ere ligne de la table
+```
+ http://localhost:8000/product/delete/1
+ cela supprimer la 1ere ligne de la table
  
  
  
@@ -324,7 +325,7 @@ public function delete($id)
 Une fois que vous avez un objet de référentiel, vous avez plusieurs méthodes d'assistance:
  
 
-////////////////////////////////////////////////////////////////////////
+```
 DANS LE FICHIER REPOSITORY
 
 $repository = $this->getDoctrine()->getRepository(Product::class);
@@ -348,7 +349,7 @@ $products = $repository->findBy(
 
 // look for *all* Product objects
 $products = $repository->findAll();
-////////////////////////////////////////////////////////////////////////
+```
 
 Vous pouvez également ajouter des méthodes personnalisées pour des requêtes plus complexes dans ProductRepository
 Plus d'informations à ce sujet plus tard dans la section Querying for Objects: The Repository 
