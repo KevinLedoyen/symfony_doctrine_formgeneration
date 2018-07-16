@@ -137,34 +137,40 @@ Can this field be null in the database (nullable) (yes/no) [no]:
 Cela ajoute la nouvelle propriété  description et les méthodes getDescription()et  setDescription()  dans src/Entity/Product.php
 
 La nouvelle propriété est mappée, mais elle n'existe pas encore dans la producttable. Aucun problème! Générez simplement une nouvelle migration:
-////////////////////////////////////////////////////////////////////
+```
 php bin/console make:migration
-////////////////////////////////////////////////////////////////////
+```
 Passez en revue la nouvelle migration "src / Migrations / Version20180207231217.php" 
 Si vous ouvrez ce fichier, il contient le code SQL nécessaire pour mettre à jour votre base de données! 
 Pour exécuter ce SQL, exécutez vos migrations:
-//////////////////////////////////////////////////////////////////
+```
  php bin/console doctrine:migrations:migrate
- //////////////////////////////////////////////////////////////////
+ ```
  
  Si vous préférez ajouter de nouvelles propriétés manuellement, la commande make:entity peut générer les méthodes getter et setter pour vous:
-//////////////////////////////////////////////////////////////////
+```
  php bin/console make:entity --regenerate
- //////////////////////////////////////////////////////////////////
+ ```
 Si vous apportez des modifications et souhaitez régénérer toutes les méthodes getter / setter, passez également --overwrite.
+
+Pour modifier une colonne : on modifie dans la classe correspondante dans App/Entity le nom de la colonne (attention aux getters et setters correspondants)
+Puis on lance les deux commandes suivantes pour mettre à jour
+```
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate 
+```
 
 
 Objets persistants dans la base de données ¶
 Il est temps de sauvegarder un objet Product dans la base de données! Créons un nouveau contrôleur pour expérimenter:
- //////////////////////////////////////////////////////////////////
- php bin/console make:controller ProductController
-  //////////////////////////////////////////////////////////////////
+```
+php bin/console make:controller ProductController
+```
   
  À l'intérieur du contrôleur, vous pouvez créer un nouvel Productobjet, y définir des données et l'enregistrer!
  
- ///////////////////////////////////////////////////////////////////
- 
- // src/Controller/ProductController.php
+```
+// src/Controller/ProductController.php
 namespace App\Controller;
 
 use Symfony\Component\Routing\Annotation\Route;
@@ -202,17 +208,17 @@ class ProductController extends Controller
         return new Response('Un nouveau produit est inséré '.$product->getId());
     }
 }
- 
-  //////////////////////////////////////////////////////////////////
+```
+
 http://localhost:8000/product
 cela ajoute une ligne à la table
 
 vérifions :
-  //////////////////////////////////////////////////////////////////
- php bin/console doctrine:query:sql 'SELECT * FROM product'
-   //////////////////////////////////////////////////////////////////
- 
- Récupérer des objets à partir de la base de données ¶
+```
+php bin/console doctrine:query:sql 'SELECT * FROM product'
+```
+
+Récupérer des objets à partir de la base de données ¶
 Récupérer un objet venant  de la base de données est encore plus facile. 
 Supposons que vous vouliez pouvoir voir  votre nouveau produit: 
 avec la route /product/1 
@@ -349,7 +355,7 @@ Plus d'informations à ce sujet plus tard dans la section Querying for Objects: 
 https://symfony.com/doc/current/doctrine.html#doctrine-queries
 
 						 EN SQL 
-////////////////////////////////////////////////////////////////////////
+```
 DANS LE FICHIER REPOSITORY
 // src/Repository/ProductRepository.php
   /**
@@ -371,9 +377,9 @@ public function findAllGreaterThanPrice($price): array
     // returns an array of arrays (i.e. a raw data set)
     return $stmt->fetchAll();
 }
-////////////////////////////////////////////////////////////////////////
+```
  On l'appelle dans un controller liste
- ////////////////////////////////////////////////////////////////////////////////////////////////
+```
  /**
      * @Route("/liste")
      */
@@ -389,12 +395,11 @@ public function findAllGreaterThanPrice($price): array
         return new Response("Liste:".$liste);
 
     }
+```
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-							EN DQL
-////////////////////////////////////////////////////////////////////////
+EN DQL
+```
 DANS LE FICHIER REPOSITORY
 // src/Repository/ProductRepository.php
   /**
@@ -416,14 +421,14 @@ DANS LE FICHIER REPOSITORY
         // to get just one result:
         // $product = $qb->setMaxResults(1)->getOneOrNullResult();
     }
-////////////////////////////////////////////////////////////////////////
+```
  On l'appelle dans le controller de show
  
- ////////////////////////////////////////////////////////////////////////////////////////////////
+```
 $liste='';
  $produits= $this->getDoctrine()->getRepository(Product::class)->findAllGreaterThanPrice(2000);
 foreach ($produits as $produit) {
 	$liste.=$produit->getName().'<br>';
 }
 echo $liste;
-///////////////////////////////////////////////////////////////////////////////////////////////////
+```
